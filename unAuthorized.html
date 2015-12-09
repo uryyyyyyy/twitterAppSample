@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+ 
+<head>
+    <meta charset="utf-8">
+    <title>API Gateway Smple</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.2.19/aws-sdk.js"></script>
+    <script type="text/javascript" src="./amazon-cognito.min.js"></script>
+</head>
+ 
+<body>
+</body>
+<script>
+
+AWS.config.region = 'ap-northeast-1'; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: 'ap-northeast-1:199b0b3a-b93d-4e0f-9420-e14d44a80206',
+});
+AWS.config.credentials.get(function(err) {
+  if (!err) {
+    console.log("Cognito Identity Id: " + AWS.config.credentials.identityId);
+  }
+});
+
+var s3 = new AWS.S3();
+s3.listBuckets(function(err, data) {
+  if (err) console.log(err, err.stack);
+  else console.log(data);
+});
+</script>
+ 
+</html>
+

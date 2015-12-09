@@ -6,6 +6,43 @@
 </head>
 <body>
 <script>
+
+function getEC2(token) {
+    console.log(token);
+    var creds = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: 'ap-northeast-1:199b0b3a-b93d-4e0f-9420-e14d44a80206',
+      Logins: { 
+        'graph.facebook.com': token
+      }
+    });
+
+    AWS.config.update({
+      region: 'ap-northeast-1',
+      credentials: creds
+    });
+AWS.config.credentials.get(function(err) {
+  if (!err) {
+    console.log("Cognito Identity Id: " + AWS.config.credentials.identityId);
+  }
+});
+
+AWS.config.credentials.get(function(){
+   console.log(AWS.config.credentials.identityId);
+   var syncClient = new AWS.CognitoSyncManager();
+   syncClient.openOrCreateDataset('myDataset', function(err, dataset) {
+      dataset.put('myKeys', 'myValues', function(err, record){
+         dataset.synchronize({
+            onSuccess: function(data, newRecords) {
+                console.log(data);
+                console.log(record);
+                console.log(newRecords);
+            }
+         });
+      });
+   });
+});
+  };
+  
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
@@ -16,6 +53,7 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
+      getEC2(response.authResponse.accessToken);
       testAPI();
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.

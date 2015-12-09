@@ -1,1 +1,40 @@
-hello
+<!doctype html>
+<html>
+ 
+<head>
+    <meta charset="utf-8">
+    <title>API Gateway Smple</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.2.19/aws-sdk.js"></script>
+    <script type="text/javascript" src="./amazon-cognito.min.js"></script>
+</head>
+ 
+<body>
+</body>
+<script>
+// Initialize the Amazon Cognito credentials provider
+AWS.config.region = 'ap-northeast-1'; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: 'ap-northeast-1:199b0b3a-b93d-4e0f-9420-e14d44a80206',
+});
+
+// Initialize the Cognito Sync client
+
+AWS.config.credentials.get(function(){
+   console.log(AWS.config.credentials.identityId);
+   var syncClient = new AWS.CognitoSyncManager();
+   syncClient.openOrCreateDataset('myDataset', function(err, dataset) {
+      dataset.put('myKeys', 'myValues', function(err, record){
+         dataset.synchronize({
+            onSuccess: function(data, newRecords) {
+                console.log(data);
+                console.log(record);
+                console.log(newRecords);
+            }
+         });
+      });
+   });
+});
+</script>
+ 
+</html>
+

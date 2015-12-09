@@ -22,10 +22,20 @@ AWS.config.credentials.get(function(err) {
   }
 });
 
-var s3 = new AWS.S3();
-s3.listBuckets(function(err, data) {
-  if (err) console.log(err, err.stack);
-  else console.log(data);
+AWS.config.credentials.get(function(){
+   console.log(AWS.config.credentials.identityId);
+   var syncClient = new AWS.CognitoSyncManager();
+   syncClient.openOrCreateDataset('myDataset', function(err, dataset) {
+      dataset.put('myKeys', 'myValues', function(err, record){
+         dataset.synchronize({
+            onSuccess: function(data, newRecords) {
+                console.log(data);
+                console.log(record);
+                console.log(newRecords);
+            }
+         });
+      });
+   });
 });
 </script>
  
